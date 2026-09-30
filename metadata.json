@@ -1,0 +1,6 @@
+{
+  "name": "Auren Dry Clean",
+  "description": "Premium Dry Cleaning and Laundry landing page with direct WhatsApp bookings and a built-in interactive analytics dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

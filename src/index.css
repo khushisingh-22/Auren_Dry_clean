@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "Fira Mono", monospace;
+  
+  --color-brand-teal-50: #f0fdfa;
+  --color-brand-teal-100: #ccfbf1;
+  --color-brand-teal-500: #0d9488;
+  --color-brand-teal-600: #0f766e;
+  --color-brand-teal-700: #115e59;
+  --color-brand-cyan-500: #06b6d4;
+  --color-brand-cyan-600: #0891b2;
+  --color-brand-gold-500: #d4af37; /* Auren Royal Gold */
+  --color-brand-gold-600: #c5a059;
+  --color-brand-indigo-950: #0f172a;
+}
+
+/* Scroll and font behaviors */
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-serif);
+}
+
+.font-body {
+  font-family: var(--font-sans);
+}
+
+/* Luxury Teal, Cyan, and Gold Gradients */
+.bg-teal-gold-gradient {
+  background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #d4af37 100%);
+}
+
+.text-teal-gold-gradient {
+  background: linear-gradient(135deg, #0f766e 0%, #0891b2 50%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-soft-gradient {
+  background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%);
+}
+
+.bg-light-mesh {
+  background-color: #fafbfd;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(13, 148, 136, 0.07) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(212, 175, 55, 0.06) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(8, 145, 178, 0.05) 0px, transparent 50%);
+}
+
+/* Symmetrical grid card shadows */
+.service-card-shadow {
+  box-shadow: 0 4px 20px -2px rgba(13, 148, 136, 0.05), 0 2px 10px -1px rgba(0, 0, 0, 0.01);
+}
+
+.service-card-shadow-hover {
+  box-shadow: 0 20px 40px -10px rgba(13, 148, 136, 0.12), 0 10px 20px -5px rgba(212, 175, 55, 0.05);
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Continuous background float animation for bubble vibes */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+
+.animate-float {
+  animation: float 7s ease-in-out infinite;
+}
