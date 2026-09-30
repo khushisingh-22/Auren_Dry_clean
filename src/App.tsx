@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
 import { 
   Phone, 
   Mail, 
@@ -120,6 +121,62 @@ export default function App() {
   });
 
   const startTimeRef = useRef<number>(Date.now());
+
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const heroContainerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroContainerRef,
+    offset: ["start start", "end end"]
+  });
+
+  const shouldReduceMotion = useReducedMotion();
+
+  // Smooth progress spring to prevent jumpy behaviors
+  const smoothProgress = useSpring(scrollYProgress, {
+    damping: 30,
+    stiffness: 100,
+    restDelta: 0.001
+  });
+
+  // Transforms for 3D card rotation
+  const rotateY = useTransform(smoothProgress, [0, 1], [0, 25]);
+  const rotateX = useTransform(smoothProgress, [0, 1], [0, 8]);
+  const scale = useTransform(smoothProgress, [0, 1], [1, 0.85]);
+  const translateY = useTransform(smoothProgress, [0, 1], [0, -30]);
+
+  // Transform depth parallax layers
+  const badge1TranslateY = useTransform(smoothProgress, [0, 1], [0, -80]);
+  const badge2TranslateY = useTransform(smoothProgress, [0, 1], [0, 40]);
+
+  // Heading animations
+  const headingOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
+  const headingY = useTransform(smoothProgress, [0, 0.4], [0, -50]);
+
+  // Parallax background blobs
+  const blob1Y = useTransform(smoothProgress, [0, 1], [0, -120]);
+  const blob2Y = useTransform(smoothProgress, [0, 1], [0, 100]);
+
+  // Guard rails for accessibility & screen sizes
+  const activeRotateY = shouldReduceMotion ? 0 : (isMobile ? 0 : rotateY);
+  const activeRotateX = shouldReduceMotion ? 0 : (isMobile ? 0 : rotateX);
+  const activeScale = shouldReduceMotion ? 1 : scale;
+  const activeTranslateY = shouldReduceMotion ? 0 : translateY;
+
+  const activeBadge1Y = shouldReduceMotion ? 0 : badge1TranslateY;
+  const activeBadge2Y = shouldReduceMotion ? 0 : badge2TranslateY;
+
+  const activeHeadingOpacity = shouldReduceMotion ? 1 : headingOpacity;
+  const activeHeadingY = shouldReduceMotion ? 0 : headingY;
+
+  const activeBlob1Y = shouldReduceMotion ? 0 : blob1Y;
+  const activeBlob2Y = shouldReduceMotion ? 0 : blob2Y;
 
   // --- EXACT FINAL RATE LIST DATA FROM POSTER IMAGE ---
   const rateCardData: RateItem[] = [
@@ -632,21 +689,34 @@ _Hello Auren, please confirm my pickup request!_`;
         )}
       </header>
 
-      {/* Hero Welcome Cover with Compact Spacing */}
-      <section className="relative pt-12 pb-14 overflow-hidden bg-gradient-to-b from-brand-teal-50 to-white">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+      {/* Hero Welcome Cover with Compact Spacing & 3D Parallax Scroll */}
+      <section ref={heroContainerRef} className="relative pt-12 pb-14 overflow-visible bg-gradient-to-b from-brand-teal-50 to-white min-h-[125vh] md:min-h-[145vh]">
+        {/* Parallax Background Blobs */}
+        <motion.div 
+          style={{ y: activeBlob1Y }}
+          className="absolute top-20 left-10 w-72 h-72 rounded-full bg-brand-teal-400/10 blur-[80px] pointer-events-none -z-10"
+        />
+        <motion.div 
+          style={{ y: activeBlob2Y }}
+          className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-brand-gold-400/10 blur-[100px] pointer-events-none -z-10"
+        />
+
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start relative z-10">
           
-          <div className="lg:col-span-7 flex flex-col items-start text-left">
+          <div className="lg:col-span-7 flex flex-col items-start text-left pt-6 pb-20">
             {/* Elegant Serif & Italic Hero Badge - Increased size to 16px (text-base) */}
             <div className="inline-flex items-center gap-1.5 px-4.5 py-2.5 bg-brand-gold-500/10 border border-brand-gold-500/20 rounded-full mb-6 text-base font-serif italic text-brand-teal-700">
               <Sparkles className="w-3.5 h-3.5 text-brand-gold-500 shrink-0" />
               <span>Premium Care For Your Everyday Wear</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-brand-indigo-950 leading-[1.1] mb-6">
+            <motion.h1 
+              style={{ opacity: activeHeadingOpacity, y: activeHeadingY }}
+              className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-brand-indigo-950 leading-[1.1] mb-6"
+            >
               Dry Cleaning <br />
               <span className="text-teal-gold-gradient font-display italic font-light">Makes A Difference.</span>
-            </h1>
+            </motion.h1>
 
             <p className="text-slate-600 text-base md:text-lg max-w-xl font-light leading-relaxed mb-8">
               Professional, eco-friendly solvent care that safely dissolves dirt, grease, and spots. Let our Greater Noida dry cleaning experts restore color shine and softness to your most valuable garments.
@@ -685,14 +755,27 @@ _Hello Auren, please confirm my pickup request!_`;
             </div>
           </div>
 
-          {/* Hero Right Side Visual with 24px rounded corners and double floating cards */}
-          <div className="lg:col-span-5 relative flex justify-center items-center">
-            <div className="relative w-full max-w-[380px] aspect-[1.3/1] sm:aspect-[4/3]">
+          {/* Hero Right Side Visual with 24px rounded corners, sticky behavior, and 3D parallax elements */}
+          <div className="lg:col-span-5 relative flex justify-center items-center lg:sticky lg:top-28 py-8 h-max overflow-visible">
+            <motion.div 
+              style={{ 
+                perspective: 1200,
+                rotateY: activeRotateY,
+                rotateX: activeRotateX,
+                scale: activeScale,
+                y: activeTranslateY,
+                transformStyle: "preserve-3d"
+              }}
+              className="relative w-full max-w-[380px] aspect-[1.3/1] sm:aspect-[4/3] transform-gpu"
+            >
               {/* Symmetrical background offset shadow */}
               <div className="absolute -inset-2 rounded-[30px] bg-gradient-to-tr from-brand-teal-500/10 to-brand-gold-500/5 blur-lg -z-10"></div>
               
               {/* Primary Image Frame with 24px Rounded Corners and Soft Shadow */}
-              <div className="w-full h-full rounded-[24px] overflow-hidden border border-slate-100 shadow-[0_15px_40px_rgba(15,118,110,0.15)] bg-white p-3 z-10 relative">
+              <div 
+                style={{ transform: "translateZ(0px)" }}
+                className="w-full h-full rounded-[24px] overflow-hidden border border-slate-100 shadow-[0_15px_40px_rgba(15,118,110,0.15)] bg-white p-3 z-10 relative"
+              >
                 <div className="w-full h-full rounded-[16px] overflow-hidden relative">
                   <img 
                     src={SUITS_IMAGE} 
@@ -704,8 +787,14 @@ _Hello Auren, please confirm my pickup request!_`;
                 </div>
               </div>
 
-              {/* Floating Card 1: 4.9★ Rating */}
-              <div className="absolute -top-4 -left-4 bg-white border border-slate-100 rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.08)] flex items-center gap-2.5 z-20 hover:scale-105 transition-transform duration-300">
+              {/* Floating Card 1: 4.9★ Rating - Positioned at translateZ Depth */}
+              <motion.div 
+                style={{ 
+                  y: activeBadge1Y,
+                  transform: "translateZ(40px)"
+                }}
+                className="absolute -top-4 -left-4 bg-white border border-slate-100 rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.08)] flex items-center gap-2.5 z-20 hover:scale-105 transition-transform duration-300"
+              >
                 <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 shrink-0">
                   <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -715,10 +804,16 @@ _Hello Auren, please confirm my pickup request!_`;
                   <span className="block text-sm font-bold text-slate-800 font-sans">4.9 ★ Rating</span>
                   <span className="text-[11px] text-slate-400 font-medium">Trusted by 500+ clients</span>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Floating Card 2: Free Pickup & Drop */}
-              <div className="absolute -bottom-4 -right-4 bg-white border border-slate-100 rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.08)] flex items-center gap-2.5 z-20 hover:scale-105 transition-transform duration-300">
+              {/* Floating Card 2: Free Pickup & Drop - Positioned at translateZ Depth */}
+              <motion.div 
+                style={{ 
+                  y: activeBadge2Y,
+                  transform: "translateZ(60px)"
+                }}
+                className="absolute -bottom-4 -right-4 bg-white border border-slate-100 rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.08)] flex items-center gap-2.5 z-20 hover:scale-105 transition-transform duration-300"
+              >
                 <div className="w-9 h-9 rounded-xl bg-brand-teal-50 border border-brand-teal-100 flex items-center justify-center text-brand-teal-600 shrink-0">
                   <Truck className="w-5 h-5" />
                 </div>
@@ -726,8 +821,8 @@ _Hello Auren, please confirm my pickup request!_`;
                   <span className="block text-sm font-bold text-slate-800 font-sans">Free Pickup & Drop</span>
                   <span className="text-[11px] text-slate-400 font-medium">Sector-27 & Greater Noida</span>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
 
         </div>
