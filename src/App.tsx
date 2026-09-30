@@ -38,6 +38,11 @@ const SAREE_IMAGE = "/src/assets/images/auren_saree_polishing_1790789491635.jpg"
 const LAUNDRY_IMAGE = "/src/assets/images/auren_laundry_basket_1790797910878.jpg";
 const DELIVERY_IMAGE = "/src/assets/images/auren_delivery_rider_1790797923364.jpg";
 
+// New specialized high-resolution matching assets
+const CARPET_IMAGE = "https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=600&q=80";
+const STEAM_IRON_IMAGE = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80";
+const CURTAIN_IMAGE = "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80";
+
 // WhatsApp Number configs
 const PRIMARY_PHONE = "9211014626";
 const SECONDARY_PHONE = "9990466365";
@@ -81,6 +86,7 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showAnalyticsModal, setShowAnalyticsModal] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showFloatingBar, setShowFloatingBar] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeRateTab, setActiveRateTab] = useState<"gents" | "ladies" | "winter" | "household">("gents");
   const [rateSearchQuery, setRateSearchQuery] = useState("");
@@ -183,7 +189,7 @@ export default function App() {
       name: "Carpet Cleaning",
       desc: "Delicate deep wash and rotary dirt removal for plush oriental and modern designer floor carpets.",
       priceInfo: "₹30 / sq ft",
-      image: LAUNDRY_IMAGE,
+      image: CARPET_IMAGE,
       iconColor: "text-cyan-500 bg-cyan-50 border-cyan-100",
       rateQuery: "Carpet (per sq ft)"
     },
@@ -192,7 +198,7 @@ export default function App() {
       name: "Steam Iron",
       desc: "Heavy-duty crease control and gentle steam profiling for suits, crisp formal shirts, and heavy coats.",
       priceInfo: "Starts at ₹140",
-      image: SUITS_IMAGE,
+      image: STEAM_IRON_IMAGE,
       iconColor: "text-indigo-600 bg-indigo-50 border-indigo-100",
       rateQuery: "T-Shirt / Shirt"
     },
@@ -219,7 +225,7 @@ export default function App() {
       name: "Curtain Clean",
       desc: "Eco-solvent deep dry clean for heavy door drape panels, designer double-sided curtains, and window blinds.",
       priceInfo: "₹250 - ₹350 / panel",
-      image: DELIVERY_IMAGE,
+      image: CURTAIN_IMAGE,
       iconColor: "text-sky-600 bg-sky-50 border-sky-100",
       rateQuery: "Curtain"
     }
@@ -237,8 +243,21 @@ export default function App() {
 
   // --- SESSIONS & CONVERSIONS TELEMETRY ---
   useEffect(() => {
+    let lastY = window.scrollY;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const currentY = window.scrollY;
+      setIsScrolled(currentY > 50);
+
+      // Show floating bar only when user is actively scrolling down
+      if (currentY > lastY && currentY > 200) {
+        setShowFloatingBar(true);
+      } else if (currentY < lastY) {
+        // Hide it on scroll up
+        setShowFloatingBar(false);
+      }
+      lastY = currentY;
+
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
       if (totalHeight > 0) {
         const scrolled = Math.round((window.scrollY / totalHeight) * 100);
@@ -517,45 +536,36 @@ _Hello Auren, please confirm my pickup request!_`;
       <div className={`bg-teal-gold-gradient text-white text-xs font-semibold py-2.5 px-4 transition-all duration-300 text-center relative z-40 ${isScrolled ? "h-0 py-0 overflow-hidden opacity-0" : "opacity-100"}`}>
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
           <Sparkles className="w-3.5 h-3.5 animate-pulse shrink-0" />
-          <span className="tracking-wider uppercase text-[10px] md:text-xs">✨ Get 40% OFF on All Services on 1st Order • Free Pickup & Delivery on-time</span>
+          <span className="tracking-wider uppercase text-[10px] md:text-xs">Get 40% OFF on All Services on 1st Order • Free Pickup & Delivery on-time</span>
         </div>
       </div>
 
-      {/* Header bar (3-Zone top contract) */}
-      <header className={`sticky top-0 z-30 transition-all duration-300 ${isScrolled ? "bg-white/95 backdrop-blur-md border-b border-brand-teal-500/10 py-3 shadow-md" : "bg-transparent py-5"}`}>
+      {/* Header bar (3-Zone top contract with soft glass blur) */}
+      <header className={`sticky top-0 z-30 transition-all duration-300 ${isScrolled ? "bg-white/80 backdrop-blur-md border-b border-brand-teal-500/10 py-3 shadow-sm" : "bg-white/50 backdrop-blur-sm py-5 border-b border-slate-100/50"}`}>
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           
-          {/* Zone 1: Single brand wordmark */}
+          {/* Zone 1: Brand name with Elegant Serif Cormorant font, Semi-Bold */}
           <a href="#" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-full border border-brand-gold-500/35 flex items-center justify-center bg-brand-gold-500/5 group-hover:bg-brand-gold-500/10 transition-all duration-300">
-              <svg className="w-5.5 h-5.5 text-brand-gold-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <div className="w-10 h-10 rounded-full border border-brand-teal-500/20 flex items-center justify-center bg-brand-teal-500/5 group-hover:bg-brand-teal-500/10 transition-all duration-300">
+              <svg className="w-5.5 h-5.5 text-brand-teal-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M12 4V7M12 7C14 7 19 10 20 13C21 16 19 18 17 18C15 18 13.5 16.5 12 16.5C10.5 16.5 9 18 7 18C5 18 3 16 4 13C5 10 10 7 12 7Z" />
                 <path d="M12 4C11 3 10 4 11.5 5" />
               </svg>
             </div>
-            <div className="flex flex-col text-left">
-              <span className="text-2xl font-serif font-bold tracking-widest text-brand-teal-600 leading-none">AUREN</span>
-              <span className="text-[10px] tracking-[0.25em] text-brand-gold-500 font-mono font-bold mt-0.5 uppercase leading-none">DRY CLEAN</span>
-            </div>
+            <span className="text-2xl font-serif font-semibold text-slate-800 leading-none tracking-wide group-hover:text-brand-teal-600 transition-colors">
+              Auren Dry Clean
+            </span>
           </a>
 
-          {/* Zone 2: Navigation link tabs */}
+          {/* Zone 2: Navigation Links with Left-to-Right Animated Underlines */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wide text-slate-600">
-            <a href="#our-services" className="hover:text-brand-teal-500 transition-colors">Our Services</a>
-            <a href="#studio-gallery" className="hover:text-brand-teal-500 transition-colors">Studio Gallery</a>
-            <a href="#interactive-rates" className="hover:text-brand-teal-500 transition-colors">Price List</a>
-            <a href="#pickup-schedule" className="hover:text-brand-teal-500 transition-colors">Book Pickup</a>
-            
-            <button 
-              onClick={() => setShowAnalyticsModal(true)}
-              className="text-slate-500 hover:text-brand-teal-500 font-mono text-xs flex items-center gap-1 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md transition-all"
-            >
-              <BarChart3 className="w-3.5 h-3.5 text-brand-gold-500" />
-              Dashboard
-            </button>
+            <a href="#our-services" className="relative py-1 transition-colors hover:text-brand-teal-600 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-teal-500 after:transition-all after:duration-300 hover:after:w-full">Our Services</a>
+            <a href="#studio-gallery" className="relative py-1 transition-colors hover:text-brand-teal-600 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-teal-500 after:transition-all after:duration-300 hover:after:w-full">Studio Gallery</a>
+            <a href="#interactive-rates" className="relative py-1 transition-colors hover:text-brand-teal-600 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-teal-500 after:transition-all after:duration-300 hover:after:w-full">Price List</a>
+            <a href="#pickup-schedule" className="relative py-1 transition-colors hover:text-brand-teal-600 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-teal-500 after:transition-all after:duration-300 hover:after:w-full">Book Pickup</a>
           </nav>
 
-          {/* Zone 3: Navigation Primary Actions */}
+          {/* Zone 3: Navigation Primary Actions (Call Now Button) */}
           <div className="flex items-center gap-4">
             {basket.length > 0 && (
               <button 
@@ -575,23 +585,16 @@ _Hello Auren, please confirm my pickup request!_`;
 
             <a 
               href="tel:9211014626" 
-              className="hidden lg:flex items-center gap-2 text-xs font-mono font-bold text-slate-600 hover:text-brand-teal-500 transition-colors"
+              className="px-4.5 py-2.5 bg-[#0F766E] hover:bg-[#115E59] hover:-translate-y-0.5 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md transition-all whitespace-nowrap flex items-center gap-1.5"
             >
-              <Phone className="w-3.5 h-3.5 text-brand-gold-500" />
-              <span>9211014626</span>
-            </a>
-
-            <a 
-              href="#pickup-schedule"
-              className="px-5 py-2 bg-brand-teal-600 hover:bg-brand-teal-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md transition-all whitespace-nowrap"
-            >
-              Rider Pickup
+              <Phone className="w-3.5 h-3.5" />
+              <span>Call Now</span>
             </a>
 
             {/* Mobile hamburger */}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-slate-600 hover:text-brand-teal-500"
+              className="md:hidden p-2 text-slate-600 hover:text-brand-teal-50"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -629,12 +632,13 @@ _Hello Auren, please confirm my pickup request!_`;
         )}
       </header>
 
-      {/* Hero Welcome Cover */}
-      <section className="relative pt-12 pb-24 overflow-hidden bg-gradient-to-b from-brand-teal-50 to-white">
+      {/* Hero Welcome Cover with Compact Spacing */}
+      <section className="relative pt-12 pb-14 overflow-hidden bg-gradient-to-b from-brand-teal-50 to-white">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
           
           <div className="lg:col-span-7 flex flex-col items-start text-left">
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-brand-gold-500/10 border border-brand-gold-500/25 rounded-full mb-6 text-xs font-bold text-brand-teal-700">
+            {/* Elegant Serif & Italic Hero Badge - Increased size to 16px (text-base) */}
+            <div className="inline-flex items-center gap-1.5 px-4.5 py-2.5 bg-brand-gold-500/10 border border-brand-gold-500/20 rounded-full mb-6 text-base font-serif italic text-brand-teal-700">
               <Sparkles className="w-3.5 h-3.5 text-brand-gold-500 shrink-0" />
               <span>Premium Care For Your Everyday Wear</span>
             </div>
@@ -648,28 +652,29 @@ _Hello Auren, please confirm my pickup request!_`;
               Professional, eco-friendly solvent care that safely dissolves dirt, grease, and spots. Let our Greater Noida dry cleaning experts restore color shine and softness to your most valuable garments.
             </p>
 
-            {/* Poster claims proof panel */}
-            <div className="grid grid-cols-3 gap-6 border-l-4 border-brand-gold-500 pl-4 py-1.5 mb-8 text-xs font-bold text-slate-500 font-mono">
+            {/* Poster claims proof panel - Large, Clean Sans-Serif Fonts */}
+            <div className="grid grid-cols-3 gap-6 border-l-4 border-brand-gold-500 pl-4 py-1.5 mb-8 text-slate-600 font-sans">
               <div>
-                <span className="block text-xl font-black text-brand-teal-600">40% OFF</span>
-                <span className="text-[9px] uppercase tracking-wider text-slate-400 mt-0.5 block font-bold">1ST ORDER DISC.</span>
+                <span className="block text-2xl font-bold text-brand-teal-600 leading-none">40% OFF</span>
+                <span className="text-sm font-medium text-slate-500 mt-1 block">1st Order Discount</span>
               </div>
               <div>
-                <span className="block text-xl font-black text-brand-teal-600">7 DAYS</span>
-                <span className="text-[9px] uppercase tracking-wider text-slate-400 mt-0.5 block font-bold">9:00AM - 9:00PM</span>
+                <span className="block text-2xl font-bold text-brand-teal-600 leading-none">7 Days</span>
+                <span className="text-sm font-medium text-slate-500 mt-1 block">9:00 AM - 9:00 PM</span>
               </div>
               <div>
-                <span className="block text-xl font-black text-brand-teal-600">FREE</span>
-                <span className="text-[9px] uppercase tracking-wider text-slate-400 mt-0.5 block font-bold">PICKUP & DROP</span>
+                <span className="block text-2xl font-bold text-brand-teal-600 leading-none">Free</span>
+                <span className="text-sm font-medium text-slate-500 mt-1 block">Pickup & Drop</span>
               </div>
             </div>
 
+            {/* Solid Teal Actions with Hover Lift translation */}
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <a 
                 href="#our-services"
-                className="px-8 py-4 bg-teal-gold-gradient text-white text-xs font-bold uppercase tracking-widest rounded-lg text-center shadow-lg hover:shadow-xl transition-all"
+                className="px-8 py-4 bg-[#0F766E] hover:bg-[#115E59] hover:-translate-y-0.5 text-white text-xs font-bold uppercase tracking-widest rounded-lg text-center shadow-md hover:shadow-lg transition-all"
               >
-                Explore Symmetrical Services
+                Explore Our Services
               </a>
               <a 
                 href="#pickup-schedule"
@@ -680,28 +685,46 @@ _Hello Auren, please confirm my pickup request!_`;
             </div>
           </div>
 
-          <div className="lg:col-span-5 relative flex justify-center">
-            <div className="relative w-80 sm:w-96 aspect-square max-w-full">
-              {/* Symmetrical border styling */}
-              <div className="absolute top-4 -right-4 w-full h-full rounded-2xl bg-brand-teal-500/10 border border-brand-teal-500/20 rotate-2 z-0"></div>
+          {/* Hero Right Side Visual with 24px rounded corners and double floating cards */}
+          <div className="lg:col-span-5 relative flex justify-center items-center">
+            <div className="relative w-full max-w-[380px] aspect-[1.3/1] sm:aspect-[4/3]">
+              {/* Symmetrical background offset shadow */}
+              <div className="absolute -inset-2 rounded-[30px] bg-gradient-to-tr from-brand-teal-500/10 to-brand-gold-500/5 blur-lg -z-10"></div>
               
-              <div className="absolute inset-0 rounded-2xl overflow-hidden border border-slate-100 shadow-2xl z-10 bg-white p-3">
-                <div className="w-full h-full rounded-xl overflow-hidden relative">
+              {/* Primary Image Frame with 24px Rounded Corners and Soft Shadow */}
+              <div className="w-full h-full rounded-[24px] overflow-hidden border border-slate-100 shadow-[0_15px_40px_rgba(15,118,110,0.15)] bg-white p-3 z-10 relative">
+                <div className="w-full h-full rounded-[16px] overflow-hidden relative">
                   <img 
                     src={SUITS_IMAGE} 
                     alt="Premium garments dry cleaning studio" 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-center scale-102 hover:scale-105 transition-transform duration-700"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md border border-brand-teal-100 p-4 rounded-xl shadow-lg flex items-center justify-between">
-                    <div>
-                      <span className="block text-[10px] font-mono font-bold text-brand-teal-600 uppercase leading-none mb-1">Introductory Special</span>
-                      <span className="text-sm font-bold text-slate-800">Save 40% on First Order</span>
-                    </div>
-                    <span className="px-2.5 py-1 bg-brand-gold-500 text-white font-mono text-[10px] font-bold rounded">
-                      NO CODE REQUIRED
-                    </span>
-                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent"></div>
+                </div>
+              </div>
+
+              {/* Floating Card 1: 4.9★ Rating */}
+              <div className="absolute -top-4 -left-4 bg-white border border-slate-100 rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.08)] flex items-center gap-2.5 z-20 hover:scale-105 transition-transform duration-300">
+                <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 shrink-0">
+                  <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </div>
+                <div>
+                  <span className="block text-sm font-bold text-slate-800 font-sans">4.9 ★ Rating</span>
+                  <span className="text-[11px] text-slate-400 font-medium">Trusted by 500+ clients</span>
+                </div>
+              </div>
+
+              {/* Floating Card 2: Free Pickup & Drop */}
+              <div className="absolute -bottom-4 -right-4 bg-white border border-slate-100 rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.08)] flex items-center gap-2.5 z-20 hover:scale-105 transition-transform duration-300">
+                <div className="w-9 h-9 rounded-xl bg-brand-teal-50 border border-brand-teal-100 flex items-center justify-center text-brand-teal-600 shrink-0">
+                  <Truck className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block text-sm font-bold text-slate-800 font-sans">Free Pickup & Drop</span>
+                  <span className="text-[11px] text-slate-400 font-medium">Sector-27 & Greater Noida</span>
                 </div>
               </div>
             </div>
@@ -711,53 +734,53 @@ _Hello Auren, please confirm my pickup request!_`;
       </section>
 
       {/* Trust factors strip */}
-      <section className="bg-slate-900 border-y border-slate-800 py-8 relative text-white z-10">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-xs font-mono">
+      <section className="bg-slate-900 border-y border-slate-800 py-10 relative text-white z-10">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center font-sans">
           <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-brand-teal-500/5 border border-brand-teal-500/20 flex items-center justify-center text-brand-gold-500 mb-3 shrink-0">
-              <Truck className="w-5 h-5" />
+            <div className="w-11 h-11 rounded-full bg-brand-teal-500/10 border border-brand-teal-500/20 flex items-center justify-center text-brand-gold-500 mb-3 shrink-0">
+              <Truck className="w-5.5 h-5.5" />
             </div>
-            <h4 className="font-semibold text-slate-100 uppercase tracking-wider text-[11px]">Free Pick-up & Delivery</h4>
-            <p className="text-slate-400 mt-1 text-[10px]">On-time doorstep rider dispatch</p>
+            <h4 className="font-semibold text-white uppercase tracking-normal text-[15px] md:text-base lining-nums">Free Pick-up & Delivery</h4>
+            <p className="text-white/75 mt-1.5 text-sm font-light">On-time doorstep rider dispatch</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-brand-teal-500/5 border border-brand-teal-500/20 flex items-center justify-center text-brand-gold-500 mb-3 shrink-0">
-              <ShieldCheck className="w-5 h-5" />
+            <div className="w-11 h-11 rounded-full bg-brand-teal-500/10 border border-brand-teal-500/20 flex items-center justify-center text-brand-gold-500 mb-3 shrink-0">
+              <ShieldCheck className="w-5.5 h-5.5" />
             </div>
-            <h4 className="font-semibold text-slate-100 uppercase tracking-wider text-[11px]">Gentle & Safe Cleaning</h4>
-            <p className="text-slate-400 mt-1 text-[10px]">Eco-friendly fabric care fluids</p>
+            <h4 className="font-semibold text-white uppercase tracking-normal text-[15px] md:text-base lining-nums">Gentle & Safe Cleaning</h4>
+            <p className="text-white/75 mt-1.5 text-sm font-light">Eco-friendly fabric care fluids</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-brand-teal-500/5 border border-brand-teal-500/20 flex items-center justify-center text-brand-gold-500 mb-3 shrink-0">
-              <Clock className="w-5 h-5" />
+            <div className="w-11 h-11 rounded-full bg-brand-teal-500/10 border border-brand-teal-500/20 flex items-center justify-center text-brand-gold-500 mb-3 shrink-0">
+              <Clock className="w-5.5 h-5.5" />
             </div>
-            <h4 className="font-semibold text-slate-100 uppercase tracking-wider text-[11px]">7 Days Open</h4>
-            <p className="text-slate-400 mt-1 text-[10px]">From 9:00 am to 9:00 pm</p>
+            <h4 className="font-semibold text-white uppercase tracking-normal text-[15px] md:text-base lining-nums">7 Days Open</h4>
+            <p className="text-white/75 mt-1.5 text-sm font-light">From 9:00 am to 9:00 pm</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-brand-teal-500/5 border border-brand-teal-500/20 flex items-center justify-center text-brand-gold-500 mb-3 shrink-0">
-              <Sparkles className="w-5 h-5" />
+            <div className="w-11 h-11 rounded-full bg-brand-teal-500/10 border border-brand-teal-500/20 flex items-center justify-center text-brand-gold-500 mb-3 shrink-0">
+              <Sparkles className="w-5.5 h-5.5" />
             </div>
-            <h4 className="font-semibold text-slate-100 uppercase tracking-wider text-[11px]">Expert Stain Removal</h4>
-            <p className="text-slate-400 mt-1 text-[10px]">Rigorous spot checks and treatment</p>
+            <h4 className="font-semibold text-white uppercase tracking-normal text-[15px] md:text-base lining-nums">Expert Stain Removal</h4>
+            <p className="text-white/75 mt-1.5 text-sm font-light">Rigorous spot checks and treatment</p>
           </div>
         </div>
       </section>
 
       {/* Symmetrical Grid: OUR SERVICES */}
       <section id="our-services" className="py-24 max-w-7xl mx-auto px-6 relative z-10">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-brand-gold-500 font-mono text-xs uppercase tracking-[0.2em] font-bold">Cleaner Clothes • Brighter You</span>
+        <div className="text-center max-w-[720px] mx-auto mb-16">
+          <span className="text-brand-gold-500 font-sans text-xs uppercase tracking-[0.15em] font-bold">Cleaner Clothes • Brighter You</span>
           <h2 className="text-4xl md:text-5xl font-serif text-brand-indigo-950 font-bold mt-2">OUR SERVICES</h2>
           
           <div className="flex items-center justify-center gap-2 mt-4 text-brand-gold-500">
             <span className="h-px w-10 bg-brand-gold-500/40"></span>
-            <Heart className="w-4 h-4 fill-brand-gold-500 text-brand-gold-500" />
+            <Sparkles className="w-4 h-4 text-brand-gold-500" />
             <span className="h-px w-10 bg-brand-gold-500/40"></span>
           </div>
           
-          <p className="text-slate-600 text-sm mt-4 font-light leading-relaxed">
-            Exactly matching the 6 specific laundry and cleaning services from our poster flyer. Click on any box to **enter and inspect** the exact item prices and place your direct bookings.
+          <p className="text-slate-600 text-sm mt-4 font-light leading-relaxed font-sans" style={{ textWrap: 'balance' }}>
+            From everyday wear to sofas and curtains, choose a service to see item-wise prices and book your pickup.
           </p>
         </div>
 
@@ -777,7 +800,7 @@ _Hello Auren, please confirm my pickup request!_`;
                     className="w-full h-full object-cover filter brightness-95 group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm border border-brand-teal-500/20 text-brand-teal-700 font-mono text-[10px] font-bold px-2.5 py-1 rounded">
+                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm border border-brand-teal-500/20 text-brand-teal-700 font-sans text-[10px] font-bold px-2.5 py-1 rounded">
                     {box.priceInfo}
                   </div>
                 </div>
@@ -786,14 +809,14 @@ _Hello Auren, please confirm my pickup request!_`;
                   <h3 className="text-2xl font-serif text-brand-indigo-950 font-bold group-hover:text-brand-teal-500 transition-colors">
                     {box.name}
                   </h3>
-                  <p className="text-slate-500 text-sm leading-relaxed font-light mt-2">
+                  <p className="text-slate-500 text-sm leading-relaxed font-light mt-2 font-sans">
                     {box.desc}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-brand-teal-600 group-hover:text-brand-gold-500 transition-colors">
-                <span>View Flyer Price & Book</span>
+              <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-brand-teal-600 group-hover:text-brand-gold-500 transition-colors font-sans">
+                <span>View Prices & Book</span>
                 <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
@@ -856,10 +879,10 @@ _Hello Auren, please confirm my pickup request!_`;
       {/* Symmetrical Pricing rates (tabbed, directly on screen!) */}
       <section id="interactive-rates" className="py-24 max-w-7xl mx-auto px-6 relative z-10 text-left">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-brand-gold-500 font-mono text-xs uppercase tracking-[0.2em] font-bold">Transparent Rates</span>
+          <span className="text-brand-gold-500 font-sans text-xs uppercase tracking-[0.15em] font-bold">Transparent Rates</span>
           <h2 className="text-4xl md:text-5xl font-serif text-brand-indigo-950 font-bold mt-2">Your Final Rate List</h2>
-          <p className="text-slate-600 text-sm mt-3 font-light leading-relaxed">
-            Search prices or filter by categories matching the poster flyer exactly. Tap "Direct Book" or add items to your laundry basket and checkout in one-click.
+          <p className="text-slate-600 text-sm mt-3 font-light leading-relaxed font-sans">
+            Search prices or filter by categories. Tap "Direct Book" or add items to your laundry basket and checkout in one-click.
           </p>
         </div>
 
@@ -896,7 +919,7 @@ _Hello Auren, please confirm my pickup request!_`;
               value={rateSearchQuery}
               onChange={(e) => setRateSearchQuery(e.target.value)}
               placeholder="Search garments, blazers, quilts..."
-              className="w-full bg-slate-50 text-xs text-slate-800 pl-10 pr-3 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-teal-500 font-mono"
+              className="w-full bg-slate-50 text-xs text-slate-800 pl-10 pr-3 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-teal-500 font-sans"
             />
             {rateSearchQuery && (
               <button onClick={() => setRateSearchQuery("")} className="absolute inset-y-0 right-3 flex items-center text-slate-400">
@@ -917,14 +940,14 @@ _Hello Auren, please confirm my pickup request!_`;
                   key={index}
                   className="bg-white border border-slate-100 hover:border-brand-teal-500/20 rounded-xl p-4 flex items-center justify-between gap-4 shadow-sm hover:shadow-md transition-all duration-300 group"
                 >
-                  <div>
-                    <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest block mb-0.5">
+                  <div className="font-sans">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">
                       {item.cat} category
                     </span>
                     <h4 className="text-sm font-semibold text-slate-800 group-hover:text-brand-teal-600 transition-colors leading-snug">
                       {item.item}
                     </h4>
-                    <span className="text-xs font-mono font-bold text-brand-teal-600 block mt-1">₹{item.price}</span>
+                    <span className="text-xs font-bold text-brand-teal-600 block mt-1">₹{item.price}</span>
                   </div>
 
                   <div className="flex items-center gap-1.5 shrink-0">
@@ -984,9 +1007,9 @@ _Hello Auren, please confirm my pickup request!_`;
       <section className="py-20 bg-slate-50 border-y border-slate-100 relative z-10 text-left">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-brand-gold-500 font-mono text-xs uppercase tracking-[0.2em] font-bold">Auren Meticulous Process</span>
+            <span className="text-brand-gold-500 font-sans text-xs uppercase tracking-[0.15em] font-bold">Auren Meticulous Process</span>
             <h2 className="text-3xl md:text-4xl font-serif text-brand-indigo-950 font-bold mt-2">How We Handle Your Clothes</h2>
-            <p className="text-slate-600 text-sm mt-3">Meticulous cleaning journey for elite fabrics</p>
+            <p className="text-slate-600 text-sm mt-3 font-sans">Meticulous cleaning journey for elite fabrics</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
@@ -997,12 +1020,12 @@ _Hello Auren, please confirm my pickup request!_`;
               { num: "04", name: "Steam Iron & Charak", text: "Traditional starching and roll pressing for drapes/sarees, and custom blazers heavy steam iron." },
               { num: "05", name: "Rider Return", text: "Protective garment hanger wrapping and on-time doorstep handoff back directly to your address." }
             ].map((p, idx) => (
-              <div key={idx} className="bg-white p-6 rounded-xl border border-slate-100 relative shadow-sm">
-                <span className="absolute -top-4 -left-2 text-5xl font-mono font-black text-brand-teal-500/5 select-none z-0">
+              <div key={idx} className="bg-white p-6 rounded-xl border border-slate-100 relative shadow-sm font-sans">
+                <span className="absolute -top-4 -left-2 text-5xl font-sans font-black text-brand-teal-500/5 select-none z-0">
                   {p.num}
                 </span>
                 <div className="relative z-10 mt-2 space-y-1.5">
-                  <h4 className="text-sm font-bold text-slate-800 tracking-wide uppercase font-mono">{p.name}</h4>
+                  <h4 className="text-sm font-bold text-slate-800 tracking-wide uppercase">{p.name}</h4>
                   <p className="text-xs text-slate-500 font-light leading-relaxed">{p.text}</p>
                 </div>
               </div>
@@ -1197,7 +1220,7 @@ _Hello Auren, please confirm my pickup request!_`;
                 className={`w-full py-3.5 text-xs font-bold uppercase tracking-widest rounded-lg transition-all text-white font-mono flex items-center justify-center gap-2 ${
                   bookingSuccess 
                     ? "bg-emerald-500 text-white" 
-                    : "bg-teal-gold-gradient hover:opacity-95 shadow-md cursor-pointer"
+                    : "bg-[#0F766E] hover:bg-[#115E59] hover:-translate-y-0.5 shadow-md cursor-pointer"
                 }`}
               >
                 {bookingSuccess ? (
@@ -1218,8 +1241,8 @@ _Hello Auren, please confirm my pickup request!_`;
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 py-16 relative z-10 text-left">
+      {/* Footer with Extra Bottom Padding */}
+      <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 pt-16 pb-[140px] relative z-10 text-left">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-slate-800 pb-12 mb-12">
             
@@ -1232,7 +1255,7 @@ _Hello Auren, please confirm my pickup request!_`;
               </div>
               <div className="flex flex-col text-left">
                 <span className="text-xl font-serif font-bold tracking-widest text-white leading-none">AUREN</span>
-                <span className="text-[10px] tracking-[0.25em] text-brand-gold-500 font-mono font-bold mt-0.5 uppercase leading-none">DRY CLEAN</span>
+                <span className="text-[10px] tracking-[0.25em] text-brand-gold-500 font-sans font-bold mt-0.5 uppercase leading-none">DRY CLEAN</span>
               </div>
             </div>
 
@@ -1241,13 +1264,13 @@ _Hello Auren, please confirm my pickup request!_`;
               <a href="#studio-gallery" className="hover:text-brand-teal-500 transition-colors">Visual Gallery</a>
               <a href="#interactive-rates" className="hover:text-brand-teal-500 transition-colors">Price List</a>
               <a href="#pickup-schedule" className="hover:text-brand-teal-500 transition-colors">Rider Pickup</a>
-              <button onClick={() => setShowAnalyticsModal(true)} className="hover:text-brand-gold-500 transition-colors font-mono text-brand-teal-500">
-                <span>[📊 Partner Analytics]</span>
+              <button onClick={() => setShowAnalyticsModal(true)} className="hover:text-brand-teal-500 transition-colors font-medium cursor-pointer">
+                Admin
               </button>
             </nav>
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono text-slate-500">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-sans text-slate-500">
             <div>
               <p>© {new Date().getFullYear()} Auren Dry Clean. All rights reserved. Servicing Greater Noida elite sectors.</p>
             </div>
@@ -1264,7 +1287,9 @@ _Hello Auren, please confirm my pickup request!_`;
       </footer>
 
       {/* FLOATING ACTION BAR */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white/90 border border-slate-100 px-4 py-2.5 rounded-full backdrop-blur-md shadow-xl flex items-center gap-3.5 z-30 max-w-[95vw] md:max-w-md w-max transition-all hover:border-brand-teal-500/30">
+      <div className={`fixed bottom-4 left-1/2 -translate-x-1/2 bg-white/70 border border-white/45 px-4 py-2.5 rounded-full backdrop-blur-lg shadow-xl flex items-center gap-3.5 z-30 max-w-[95vw] md:max-w-md w-max transition-all duration-300 hover:border-brand-teal-500/30 ${
+        showFloatingBar ? "translate-y-0 opacity-100 scale-100" : "translate-y-12 opacity-0 scale-95 pointer-events-none"
+      }`}>
         
         <a 
           href="tel:9211014626"
@@ -1296,7 +1321,7 @@ _Hello Auren, please confirm my pickup request!_`;
           ) : (
             <>
               <Sparkles className="w-3.5 h-3.5 text-brand-gold-500 shrink-0" />
-              <span>Poster Prices</span>
+              <span>View Prices</span>
             </>
           )}
         </button>
@@ -1330,8 +1355,8 @@ _Hello Auren, please confirm my pickup request!_`;
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
               
               <div className="relative z-10 space-y-1">
-                <span className="text-[9px] font-mono font-bold text-brand-gold-500 uppercase tracking-widest block leading-none">
-                  Flyer Rate List
+                <span className="text-[9px] font-sans font-bold text-brand-gold-500 uppercase tracking-widest block leading-none">
+                  Itemized Prices
                 </span>
                 <h3 className="text-2xl font-serif font-bold text-white tracking-wide leading-none">
                   {getCategoryMetaData(selectedCategory).name}
@@ -1364,12 +1389,12 @@ _Hello Auren, please confirm my pickup request!_`;
                     >
                       <div>
                         <h4 className="text-sm font-semibold text-slate-800 leading-normal">{item.item}</h4>
-                        <span className="text-xs font-mono font-bold text-brand-teal-600">Rate: ₹{item.price}</span>
+                        <span className="text-xs font-sans font-bold text-brand-teal-600">Rate: ₹{item.price}</span>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
                         {qtyInBasket > 0 ? (
-                          <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg p-1 text-xs font-mono">
+                          <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg p-1 text-xs font-sans">
                             <button 
                               onClick={() => removeFromBasket(item.item)}
                               className="w-5 h-5 rounded hover:bg-slate-200 text-brand-teal-600 font-bold"
@@ -1469,14 +1494,14 @@ _Hello Auren, please confirm my pickup request!_`;
                 basket.map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
                     <div className="text-left">
-                      <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest block leading-none">
+                      <span className="text-[9px] font-sans font-bold text-slate-400 uppercase tracking-widest block leading-none">
                         {item.cat} wear
                       </span>
                       <h4 className="text-sm font-semibold text-slate-800 leading-normal mt-0.5">{item.item}</h4>
-                      <span className="text-xs font-mono font-bold text-brand-teal-600">Rate: ₹{item.price}</span>
+                      <span className="text-xs font-sans font-bold text-brand-teal-600">Rate: ₹{item.price}</span>
                     </div>
 
-                    <div className="flex items-center gap-2 font-mono">
+                    <div className="flex items-center gap-2 font-sans">
                       <button 
                         onClick={() => removeFromBasket(item.item)}
                         className="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm flex items-center justify-center"
@@ -1495,18 +1520,18 @@ _Hello Auren, please confirm my pickup request!_`;
                 ))
               ) : (
                 <div className="text-center py-12 text-slate-400 text-sm font-light">
-                  Your dry cleaning list is empty. Add items from the flyer rates first!
+                  Your dry cleaning list is empty. Add items from the rate list first!
                 </div>
               )}
             </div>
 
             <div className="p-5 border-t border-slate-100 bg-slate-50 space-y-3 shrink-0">
-              <div className="flex justify-between items-center text-xs font-mono">
+              <div className="flex justify-between items-center text-xs font-sans">
                 <span className="text-slate-500">Total Items Selected:</span>
                 <span className="text-slate-800 font-bold">{getBasketTotalCount()} garments</span>
               </div>
-              <p className="text-[10px] text-slate-400 leading-normal text-left">
-                ⚠️ Estimates are according to final rate list flyer. Final review is conducted by the rider during pickup collection.
+              <p className="text-[10px] text-slate-400 leading-normal text-left font-sans">
+                ⚠️ Estimates are according to our standard rate list. Final review is conducted by the rider during pickup collection.
               </p>
 
               <div className="flex gap-2.5 pt-2">
